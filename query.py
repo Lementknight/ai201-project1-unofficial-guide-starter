@@ -116,49 +116,40 @@ def build_interface():
     """
     Build and launch the Gradio web UI.
     """
-    with gr.Blocks(title="Benefits Guide Q&A", css="""
-        .header-section { margin-bottom: 1.5rem; }
-        .query-section { margin-bottom: 1rem; }
-        .results-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        @media (max-width: 900px) { .results-row { grid-template-columns: 1fr; } }
-        .footer-section { margin-top: 2rem; opacity: 0.85; }
-    """) as interface:
-        with gr.Group(elem_classes="header-section"):
-            gr.Markdown("""
+    with gr.Blocks(title="Benefits Guide Q&A") as interface:
+        gr.Markdown("""
 # Employee Benefits Guide — Q&A
 Ask any question about employee benefits, 401(k)s, health insurance, vesting, negotiation, and more.
 This system answers based on real guides for new grad hires.
-            """)
+        """)
 
-        with gr.Group(elem_classes="query-section"):
-            query_input = gr.Textbox(
-                label="Your Question",
-                placeholder="e.g., What is the difference between HDHP and PPO? What's the 401(k) match?",
-                lines=4,
-                interactive=True,
-            )
-            with gr.Row():
-                submit_btn = gr.Button("Ask", variant="primary", size="lg", scale=1)
-                gr.Markdown("**Tip:** Be specific for better answers!", scale=3)
+        query_input = gr.Textbox(
+            label="Your Question",
+            placeholder="e.g., What is the difference between HDHP and PPO? What's the 401(k) match?",
+            lines=3,
+            interactive=True,
+        )
 
-        with gr.Row(elem_classes="results-row"):
+        submit_btn = gr.Button("Ask", variant="primary", size="lg")
+        gr.Markdown("*Tip: Be specific for better answers!*")
+
+        with gr.Row():
             answer_output = gr.Textbox(
                 label="Answer",
                 interactive=False,
-                lines=10,
+                lines=8,
             )
             sources_output = gr.Textbox(
                 label="Sources Used",
                 interactive=False,
-                lines=10,
+                lines=8,
             )
 
-        with gr.Group(elem_classes="footer-section"):
-            gr.Markdown("""
+        gr.Markdown("""
+---
 **How this works:** Your question is embedded and matched against a database of benefits guides.
-The top 5 most relevant sections are sent to an LLM (Groq Llama 70B) with strict instructions
-to answer only from those sources, ensuring accuracy and transparency.
-            """)
+The top 5 most relevant sections are sent to an LLM (Groq Llama 70B) with strict instructions to answer only from those sources.
+        """)
 
         submit_btn.click(
             fn=gradio_ask,
