@@ -12,9 +12,14 @@ env/
 # Jupyter
 .ipynb_checkpoints/
 
-# ChromaDB local storage
+# Generated pipeline artifacts (recreated by running scripts)
 chroma_db/
 chroma/
+documents/*.json
+
+# IDE
+.vscode/
+.idea/
 
 # macOS
 .DS_Store
