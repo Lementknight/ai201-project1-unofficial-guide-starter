@@ -238,24 +238,27 @@ Sources Used:
 
 ## System Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                            RAG Pipeline Architecture                         │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                               │
-│  Document Ingestion    Chunking         Embedding + Store    Retrieval  Gen. │
-│  ───────────────────   ────────────     ─────────────────    ────────── ──  │
-│                                                                               │
-│  • 14 sources          Semantic          • all-mpnet-base-v2  ChromaDB   Groq│
-│  • Web URLs & blogs    chunking:         • 768 dimensions     semantic   API │
-│  • Python requests/    • 1000-1500       • ChromaDB vector    search     call│
-│    Playwright/         chars per chunk   store (persisted)   • top-k=5      │
-│    trafilatura/        • 10-15% overlap  • Metadata attached               │
-│    readability         • Preserve        • 101 documents                    │
-│  • Extract plain text    section           embedded                         │
-│                          boundaries                                          │
-│                                                                               │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph LR
+    A["📄 Document Ingestion<br/>14 sources<br/>requests → Playwright<br/>→ trafilatura<br/>→ readability<br/>→ BeautifulSoup"] -->|Raw Text| B["✂️ Semantic Chunking<br/>1000-1500 chars<br/>100-200 char overlap<br/>Preserve section<br/>boundaries"]
+    
+    B -->|101 Chunks| C["🔢 Embedding<br/>all-mpnet-base-v2<br/>768 dimensions<br/>Metadata attached"]
+    
+    C -->|Vector Embeddings| D["🗄️ Vector Store<br/>ChromaDB<br/>Persistent storage<br/>101 documents"]
+    
+    D -->|User Query| E["🔍 Semantic Retrieval<br/>top-k=5<br/>Similarity search<br/>Distance scoring"]
+    
+    E -->|Retrieved Chunks| F["🤖 Grounded Generation<br/>Groq LLM<br/>System prompt<br/>enforcement<br/>Source attribution"]
+    
+    F -->|Grounded Answer| G["✅ User Response<br/>Answer + Sources<br/>Confidence scoring"]
+    
+    style A fill:#e1f5ff
+    style B fill:#fff3e0
+    style C fill:#f3e5f5
+    style D fill:#e8f5e9
+    style E fill:#fce4ec
+    style F fill:#fff9c4
+    style G fill:#c8e6c9
 ```
 
 ---
